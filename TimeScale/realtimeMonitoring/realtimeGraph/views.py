@@ -495,8 +495,7 @@ La respuesta tiene esta estructura:
 def get_map_json_2(request, **kwargs):
     data_result = {}
 
-    measureParam = kwargs.get("measure", None)
-    time1 = kwargs.get("time1", None)
+    measureParam = "Humedad"
     selectedMeasure = None
     measurements = Measurement.objects.all()
 
@@ -508,13 +507,10 @@ def get_map_json_2(request, **kwargs):
     locations = Location.objects.all()
 
     data = []
-
-    start_ts = int(time1.timestamp() * 1000000)
-
     for location in locations:
         stations = Station.objects.filter(location=location)
         locationData = Data.objects.filter(
-            station__in=stations, measurement__name=selectedMeasure.name, time__gte=start_ts,
+            station__in=stations, measurement__name=selectedMeasure.name,
         )
         if locationData.count() <= 0:
             continue
@@ -532,13 +528,7 @@ def get_map_json_2(request, **kwargs):
                 "avg": round(avgVal if avgVal != None else 0, 2),
             }
         )
-
-    startFormatted = time1.strftime("%d/%m/%Y") if time1 != None else " "
-
-    data_result["locations"] = [loc.str() for loc in locations]
-    data_result["start"] = startFormatted
-    data_result["data"] = data
-
+    data_result = data
     return JsonResponse(data_result)
 
 
