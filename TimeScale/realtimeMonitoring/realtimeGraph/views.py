@@ -505,7 +505,6 @@ def get_map_json_2(request, **kwargs):
         selectedMeasure = measurements[0]
 
     locations = Location.objects.all()
-
     data = []
     for location in locations:
         stations = Station.objects.filter(location=location)
@@ -528,7 +527,7 @@ def get_map_json_2(request, **kwargs):
                 "avg": round(avgVal if avgVal != None else 0, 2),
             }
         )
-    data_result = data
+    data_result["data"] = data
     return JsonResponse(data_result)
 
 
